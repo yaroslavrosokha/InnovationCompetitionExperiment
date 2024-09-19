@@ -1,0 +1,43 @@
+{% extends "App02_ExperimentIntroduction/myPage.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Introduction
+{% endblock %}
+
+{% block content %}
+    <div class="card bg-light instructions">
+    <div class="card-body">
+    <p align="justify">
+        Welcome and thank you for participating! Today's experiment will last about {{ Constants.duration }} minutes.
+        Everyone will earn at least ${{ Constants.min_payment }}.
+        If you follow the instructions carefully, you might earn even more money.
+        This money will be paid at the end of the experiment in private and in cash.
+    </p>
+
+    <p align="justify">
+        It is important that during the experiment you remain <b>silent</b>.
+        If you have a question or need assistance of any kind, please <b>raise your hand,
+        but do not speak</b> - and an experiment administrator will
+        come to you, and you may then whisper your question. In addition, <b>please turn off your cell phones and
+        put them away during the experiment</b>. Anybody that violates these rules will be asked to leave.
+    </p>
+
+    <p align="justify">
+        In this experiment you will face 27 tasks in which you will take the role of an entrepreneur.
+        Prior to each task, you will be provided with the information
+        regarding the task. At the end of the experiment, <strong style="color: red;">two</strong> of the
+        tasks will be chosen randomly to determine your actual money earnings. Thus, <strong style="color: red;">your decisions
+        in one task will not affect your earnings in any other task</strong>. In addition, at the end of the 33 tasks,
+        you will be asked to fill out several questionnaires.
+    </p>
+
+    <p align="justify">
+        Next, you will be provided detailed information pertaining to Task #1-8 of the experiment.
+        Before starting with the actual tasks, you will face <b>one practice task</b>. Your compensation for the experiment
+        will not depend on the practice task.
+    </p>
+    </div>
+    </div>
+    {% next_button %}
+{% endblock %}

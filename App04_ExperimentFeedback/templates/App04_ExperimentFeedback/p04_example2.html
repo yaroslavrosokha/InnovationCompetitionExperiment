@@ -1,0 +1,327 @@
+{% extends "App04_ExperimentFeedback/myPage.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Tasks #9-16: Practice Task
+{% endblock %}
+
+{% block content %}
+
+    <p onload="draw1()"></p>
+
+        <p align="justify" id="par1" style="width: 50%">
+            For each of the Tasks #9-16, you will be randomly matched with
+            another participant in this room. That is, there will be new random rematching at the beginning of each task, but the matching will stay fixed within a task.
+            Each participant will be endowed with $10 and able to develop up to {{ Constants.maxTechnologies }}
+            technologies at the cost of $1 per technology. At the time of each decision you <b>will know</b>
+            the technology that has the best quality among all of the
+            technologies developed so far (either by you or by the participant that you are matched with). Note that only the best
+            technology among the two of you can be brought to the market and yield revenue. <strong style="color: red">The best technology will
+            generate a revenue of $10.</strong>
+            For the practice task, you will make a sequence of decisions in this setting, however, unlike the actual
+            tasks, for the practice tasks you will be matched with a computer that chooses randomly.
+        </p>
+
+        <p align="justify" id="par2" style="width: 50%">
+            <b>Market Summary:</b>
+            <ul>
+            <li style="width: 50%">Number of entrepreneurs: <strong style="color: blue">Two</strong></li>
+            <li style="width: 50%">Best market technology: <strong style="color: blue">Known</strong></li>
+            <li style="width: 50%">Cost per technology: <strong style="color: blue"> $1 </strong></li>
+            <li style="width: 50%">Your endowment: <strong style="color: blue"> $10 </strong></li>
+            </ul>
+        </p>
+
+        <p align="justify" id="par1" style="width: 50%">
+            You will make a sequence of
+            {{ Constants.maxTechnologies }} decisions.
+            Each decision is a choice between two options:
+            <ul>
+            <li>Option A: develop another technology at a cost of $1</li>
+            <li>Option B: do NOT develop another technology</li>
+            </ul>
+
+        </p>
+        <p align="justify" id="par1" style="width: 50%">
+            The summary of the
+            probability that the new technology will be better (or worse) than the best
+            currently available technology is presented below. The graphical summary is
+            presented to the right.
+        </p>
+
+
+
+
+        <canvas class="myOuterBox" id="canvas1" width="502" height="402"></canvas>
+
+        <p align="justify" id="par4" style="width: 50%">
+            <b>Decision Summary:</b>
+            <ul>
+            <li style="width: 50%" id="decNumber1">Decision number: <strong id="decNumber">1</strong></li>
+            <li style="width: 50%">Technologies developed by you: <strong id="developed">None</strong></li>
+            <li style="width: 50%">Incurred cost: <strong id="totalCost">$0</strong></li>
+            <li style="width: 50%">Best technology: <strong id="best" style="color: blue;background-color: yellow">0.000</strong></li>
+            <li style="width: 50%" id="probDesc1">Probability that technology #<strong id="tech1">1</strong> will be better
+                than <strong id="best3">0.000</strong> is <strong id="probBetter">100%</strong></li>
+            <li style="width: 50%" id="probDesc2">Probability that technology #<strong id="tech2">1</strong> will be worse
+                than <strong id="best4">0.000</strong> is <strong id="probWorse">0%</strong></li>
+
+            </ul>
+        </p>
+
+
+        <p align="justify" id="par3" style="display:none;width: 50%">
+        <b>Task Earnings</b>: <strong id="endow" style="color: darkgreen">$10</strong> + <strong id="best2" style="color: darkgreen">None</strong> -
+            <strong id="totalCost2" style="color: red">None</strong> =
+        <strong id="totalEarnings" style="background-color: yellow">None</strong>
+        </p>
+
+
+<br>
+        <p align="justify" id="makeDecision">
+            Please make your decision:
+        </p>
+
+    <div >
+        <p align="left" style="width: 50%">
+            <button type="button" id='OptionA' class="otree-btn-next btn btn-primary"
+                        onclick="chosenA();" style="display:inline-block;"> Option A: Develop Technology #<strong id="tech3">1</strong> for ${{ Constants.cost2|json }}. </button>
+            <button type="button" id='OptionB' class="otree-btn-next btn btn-primary"
+                        onclick="chosenB();" style="display:inline-block;"> Option B: Do NOT Develop Technology #<strong id="tech4">1</strong>. </button>
+        </p>
+    </div>
+
+
+    <input type="hidden" name="myTechEx2" id="myTechEx2"/>
+    <input type="hidden" name="otherTechEx2" id="otherTechEx2"/>
+    <input type="hidden" name="myEarnEx2" id="myEarnEx2"/>
+
+    <button class="otree-btn-next btn btn-primary" id="NextButton" style="display:none;">Next</button>
+{% endblock %}
+
+
+
+{% block scripts %}
+
+    <script>
+
+    var myExample={draws:[.25,.5,.75,1,1.25,.1,.2,.3,.9,2,.35,.15,.65,1.1,1.5,.11,.21,.31,.91,2.01,.12,.22,.32,.92,2.02],
+        counter:0,points:[],otherPoints:[],best:0,revenue:0,
+    better:100.0,worse:0.0,otherDraws:[.5,.65,.75,1.1,.25,.13,.26,.38,.19,1.51,.5,.65,.75,1.1,.25,.13,.26,.38,.19,1.51,.13,.26,.38,.19,1.52]};
+
+    function drawExample() {
+
+        var canvas = document.getElementById("canvas1");
+        if (null == canvas || !canvas.getContext) return;
+
+        var axes = {}, ctx = canvas.getContext("2d");
+        axes.xMin = 35;  // x0 pixels from left to x=0
+        axes.xMax = canvas.width - 35;
+        axes.yMin = -35 + canvas.height; // y0 pixels from top to y=0
+        axes.yMax = 35;
+        axes.xScale = (axes.xMax - axes.xMin) / 50.0;
+        axes.yScale = (axes.yMin - axes.yMax) / 0.15;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        shadeGraph1(ctx, axes, fun3, "#fdccc7",myExample.best);
+        shadeGraph2(ctx, axes, fun3, "#d7eedd",myExample.best);
+        pointsGraph(ctx, axes,myExample.points);
+        pointGraph(ctx,axes, myExample.best, "darkgreen");
+        bestGraph(ctx, axes, fun3, 1, myExample.best);
+
+        funGraph(ctx, axes, fun3, "#8e5ea2", 3);
+        showAxes(ctx, axes);
+    }
+
+    function chosenA(){
+        var currentDraw=randomExponential();
+        myExample.points.push(currentDraw);
+        if(Math.random()<.5) {
+            var currentDraw2 = randomExponential();
+            myExample.otherPoints.push(currentDraw2)
+        }else{
+            var currentDraw2 = 0.000;
+        }
+
+        var bestDraw=Math.max(currentDraw,currentDraw2);
+
+        if(myExample.best<bestDraw){
+            myExample.best=bestDraw;
+        }
+        drawExample();
+
+        myExample.counter++;
+        updateSummary();
+
+        if(myExample.counter=={{ Constants.maxTechnologies|json }}){
+            hide("OptionA");
+            hide("OptionB");
+
+            hide("makeDecision");
+            hide("probDesc1");
+            hide("probDesc2");
+            hide("decNumber1");
+
+            var iWin=false;
+            for(var i=0;i<myExample.points.length;i++){
+                if(myExample.points[i]==myExample.best){
+                    iWin=true;
+                }
+            }
+
+            if(iWin) {
+                myExample.revenue = 10;
+            }
+
+
+            updateText("totalCost2","$"+(myExample.points.length*{{ Constants.cost2|json }}).toFixed(0));
+            updateText("best2","$"+myExample.revenue.toFixed(0));
+            updateText("totalEarnings","$"+(10+myExample.revenue-myExample.points.length*{{ Constants.cost2|json }}).toFixed(0));
+
+            var myEarnEx2=document.getElementById("myEarnEx2");
+            myEarnEx2.value=(10+myExample.revenue-myExample.points.length*{{ Constants.cost2|json }}).toFixed(0);
+
+            var myTechEx2=document.getElementById("myTechEx2");
+            myTechEx2.value="";
+            for(var i=0;i<myExample.points.length-1;i++){
+                myTechEx2.value+=myExample.points[i]+",";
+            }
+            myTechEx2.value+=myExample.points[i];
+
+            var otherTechEx2=document.getElementById("otherTechEx2");
+            otherTechEx2.value="";
+            for(var i=0;i<myExample.otherPoints.length-1;i++){
+                otherTechEx2.value+=myExample.otherPoints[i]+",";
+            }
+            otherTechEx2.value+=myExample.otherPoints[i];
+
+
+
+            show("NextButton");
+            show("par3");
+        }
+    }
+
+    function chosenB(){
+
+        if(Math.random()<.5) {
+            var currentDraw2 = randomExponential();
+            myExample.otherPoints.push(currentDraw2)
+        }else{
+            var currentDraw2 = 0.000;
+        }
+
+        var bestDraw=Math.max(0.000,currentDraw2);
+
+        if(myExample.best<bestDraw){
+            myExample.best=bestDraw;
+        }
+        drawExample();
+
+        myExample.counter++;
+        updateSummary();
+
+        if(myExample.counter=={{ Constants.maxTechnologies|json }}){
+            hide("OptionA");
+            hide("OptionB");
+
+            hide("makeDecision");
+            hide("probDesc1");
+            hide("probDesc2");
+            hide("decNumber1");
+
+            var iWin=false;
+            for(var i=0;i<myExample.points.length;i++){
+                if(myExample.points[i]==myExample.best){
+                    iWin=true;
+                }
+            }
+
+            if(iWin) {
+                myExample.revenue = 10.0;
+            }
+
+            updateText("totalCost2","$"+(myExample.points.length*{{ Constants.cost2|json }}).toFixed(0));
+            updateText("best2","$"+myExample.revenue.toFixed(0));
+            updateText("totalEarnings","$"+(10+myExample.revenue-myExample.points.length*{{ Constants.cost2|json }}).toFixed(0));
+
+
+            var myEarnEx2=document.getElementById("myEarnEx2");
+            myEarnEx2.value=(10+myExample.revenue-myExample.points.length*{{ Constants.cost2|json }}).toFixed(0);
+            console.log(myEarnEx2.value)
+
+            var myTechEx2=document.getElementById("myTechEx2");
+            myTechEx2.value="";
+            for(var i=0;i<myExample.points.length-1;i++){
+                myTechEx2.value+=myExample.points[i]+",";
+            }
+            myTechEx2.value+=myExample.points[i];
+
+            var otherTechEx2=document.getElementById("otherTechEx2");
+            otherTechEx2.value="";
+            for(var i=0;i<myExample.otherPoints.length-1;i++){
+                otherTechEx2.value+=myExample.otherPoints[i]+",";
+            }
+            otherTechEx2.value+=myExample.otherPoints[i];
+
+            show("NextButton");
+            show("par3");
+        }
+    }
+
+    function updateSummary(){
+        updateText("tech1",(myExample.counter+1).toFixed(0));
+        updateText("tech2",(myExample.counter+1).toFixed(0));
+        updateText("tech3",(myExample.counter+1).toFixed(0));
+        updateText("tech4",(myExample.counter+1).toFixed(0));
+        updateText("decNumber",(myExample.counter+1).toFixed(0));
+        updateText("best3",(myExample.best).toFixed(3));
+        updateText("best4",(myExample.best).toFixed(3));
+
+        var developed = "";
+        if(myExample.points.length==0){
+            developed="None"
+        }else{
+            for(var i=0;i<myExample.points.length-1;i++){
+                if(myExample.points[i]==myExample.best){
+                    developed+="<strong style=\"color: darkgreen\">" + myExample.points[i].toFixed(3)+"</strong>, "
+                }else{
+                    developed+="<strong style=\"color: gray\">" + myExample.points[i].toFixed(3)+"</strong>, "
+                }
+
+            }
+            if(myExample.points[i]==myExample.best){
+                    developed+="<strong style=\"color: darkgreen\">" + myExample.points[i].toFixed(3)+"</strong>"
+                }else{
+                    developed+="<strong style=\"color: gray\">" + myExample.points[i].toFixed(3)+"</strong>"
+            }
+        }
+        updateText("developed",developed);
+
+        updateText("totalCost",myExample.points.length.toFixed(0)+" x ${{ Constants.cost2|json }}=$"+(myExample.points.length*{{ Constants.cost2|json }}).toFixed(0));
+
+        {#updateText("best",myExample.best.toFixed(3));#}
+
+        var iWin=false;
+        for(var i=0;i<myExample.points.length;i++){
+            if(myExample.points[i]==myExample.best){
+                iWin=true;
+            }
+        }
+
+        if(iWin) {
+            updateText("best", myExample.best.toFixed(3) + " (developed by you)");
+        } else {
+            updateText("best", myExample.best.toFixed(3) + " (developed by the other participant)");
+        }
+
+        updateText("probWorse",(100 * fun3Cumulative(myExample.best)).toFixed(0)+"%");
+        updateText("probBetter",(100 * (1 - fun3Cumulative(myExample.best))).toFixed(0)+"%");
+    }
+
+    drawExample();
+
+    </script>
+
+{% endblock %}

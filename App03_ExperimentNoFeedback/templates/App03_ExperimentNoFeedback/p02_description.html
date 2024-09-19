@@ -1,0 +1,205 @@
+{% extends "App03_ExperimentNoFeedback/myPage.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Tasks #1-8: Description
+{% endblock %}
+
+{% block content %}
+
+    <body onload="draw1()">
+
+    <p align="justify" id="par1" style="width: 50%">
+            In Tasks #1-8 of the experiment, you will be given an endowment of $10 and choose whether to develop
+            up to {{ Constants.maxTechnologies }} technologies at a cost of $1 per technology.
+            The quality of each technology is uncertain
+            and will be determined randomly using the probability distribution to the right.
+            However, only the best technology can be brought to the market and yield revenue.
+    </p>
+
+    <canvas class="myOuterBox" id="canvas1" width="502" height="402"></canvas>
+
+
+
+    <p align="justify" id="par2" style="width: 50%;display: none">
+            The decisions whether to develop a technology will be made sequentially.
+            In particular, you will first decide whether to develop
+            technology #1. If you decide to do so, you will incur a cost of $1 and observe
+            the quality of technology #1. Next, you will decide whether to develop technology #2. If so, you will incur
+            a cost of $1. And so on. Each new technology will be obtained using <strong style="color: red;">an independent draw
+            from the distribution</strong> to the right.
+            That is, quality of technology #2 does not depend on technology #1, quality of technology #3 does not
+            depend on technology #2, etc.
+            At each decision, you will be provided with the summary information in the graphical and text forms.
+    </p>
+
+
+
+    <p align="justify" id="par3" style="width: 50%;display: none">
+
+            For example, suppose you have developed 4 technologies. Each of them will be marked on the graph with a line.
+            At the time of each decision, you will be provided with the
+            probability that a new technology will be better (or worse) than the best known technology. For example, suppose you
+            are deciding whether to develop technology #5, then the probability
+            that technology #5 will be better than the best known technology is shaded in green, and is equal to
+            <strong style="color: darkgreen;">36%</strong>.
+            The probability that technology #5 will be worse than the best known technology is shaded in red,
+            and is equal to <strong style="color: red;">64%</strong>.
+
+    </p>
+
+    <p align="justify" id="par4" style="width: 50%;display: none">
+            For each task, you will be randomly matched with another participant in this room.
+            Each of you will simultaneously and independently decide whether to develop up
+            to {{ Constants.maxTechnologies }} technologies (one technology at a time).
+            At the time of each decision you will not know the technology that has the best quality among all of the
+            technologies developed so far (either by you or by the participant that you are matched with).
+        After all of the decisions have been made, the best technology developed in during the task (either by you or by the participant that you are matched with)
+        will be revealed. The <strong style="color: red;">best technology will be adopted by the market and yield $10 revenue</strong>.
+    </p>
+
+    <p align="justify" id="par5" style="width: 50%;display: none">
+        At this time you can get some experience of drawing from the distribution. You can click 'Draw' to draw a random
+        number from the distribution. You can also click 'Reset' to clear all the draws. Reminder, each draw is independent from
+        all other draws. Note, that although the diagram shows domain to be [0,50], the domain is unbounded
+            and there is a small chance (less than a quarter of one percent) that a draw from the distribution will exceed 50.
+        When you are done drawing random numbers from the distribution, please click 'Continue to Practice Task'.
+    </p>
+
+
+    <div >
+        <p align="left" style="width: 50%">
+{#            <button type="button" id='<<' class="button"#}
+{#                        onclick="previousSubpage();" style="display:none;"> << </button>#}
+            <button type="button" id='>>' class="otree-btn-next btn btn-primary"
+                        onclick="nextSubpage();" style="display:inline-block;"> >> </button>
+        </p>
+    </div>
+
+
+    <button type="button" id='DrawRandomNumber' class="otree-btn-next btn btn-primary"
+                        onclick="randomDraw();" style="display:none;"> Draw </button>
+        <button type="button" id='ResetDraws' class="otree-btn-next btn btn-primary"
+                        onclick="resetGraph();" style="display:none;"> Reset </button>
+
+
+    <input type="hidden" name="task1" value="0000000000" id="id_task1"/>
+
+    <button class="otree-btn-next btn btn-primary" id="NextButton" style="display:none;position: absolute; right:100px; bottom: 50px;">Continue To Practice Task</button>
+
+    <br><br><br><br>
+{% endblock %}
+
+
+{% block scripts %}
+
+
+<script>
+
+
+var MyVariables = {currentPage:1};
+
+var myExample={
+            draws:[],
+            counter:0,
+            points:[1,4,6.5,8.2],
+            otherPoints:[],
+            best:8.2,
+            revenue:0,
+            better:100.0,
+            worse:0.0,
+            otherDraws:[],
+};
+
+
+function nextSubpage() {
+    console.log("@nextSubpage...",MyVariables);
+    if (MyVariables.currentPage < 6) {
+        MyVariables.currentPage++;
+    }
+
+    if (MyVariables.currentPage == 2) {
+        console.log("@currentPage2");
+        show("par2");
+    }
+
+    if (MyVariables.currentPage == 3) {
+        console.log("@currentPage3");
+        draw2();
+        draw3();
+        show("par3");
+        {#show("summary1");#}
+    }
+
+    if (MyVariables.currentPage == 4) {
+        console.log("@currentPage4");
+        show("par4");
+    }
+
+
+    if (MyVariables.currentPage == 5) {
+        console.log("@currentPage5");
+        show("par5");
+        hide(">>");
+        showInline('DrawRandomNumber');
+        showInline('ResetDraws');
+
+    }
+
+
+}
+
+function resetGraph(){
+    console.log('resetGraph...',myExample)
+    myExample.points=[];
+    myExample.best=0;
+    drawExample();
+}
+
+
+function randomDraw(){
+    console.log('randomDraw...',myExample)
+        show("NextButton");
+
+        var currentDraw=randomExponential();
+        myExample.points.push(currentDraw);
+
+
+        if(myExample.best<currentDraw){
+            myExample.best=currentDraw;
+        }
+        drawExample();
+
+
+    }
+
+        function drawExample() {
+
+    console.log('drawExample...',myExample)
+
+        var canvas = document.getElementById("canvas1");
+        if (null == canvas || !canvas.getContext) return;
+
+        var axes = {}, ctx = canvas.getContext("2d");
+        axes.xMin = 35;  // x0 pixels from left to x=0
+        axes.xMax = canvas.width - 35;
+        axes.yMin = -35 + canvas.height; // y0 pixels from top to y=0
+        axes.yMax = 35;
+        axes.xScale = (axes.xMax - axes.xMin) / 50.0;
+        axes.yScale = (axes.yMin - axes.yMax) / 0.15;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        shadeGraph1(ctx, axes, fun3, "#fdccc7",myExample.best);
+        shadeGraph2(ctx, axes, fun3, "#d7eedd",myExample.best);
+        pointsGraph(ctx, axes,myExample.points);
+        pointGraph(ctx,axes, myExample.best, "darkgreen");
+        bestGraph(ctx, axes, fun3, 1, myExample.best);
+
+        funGraph(ctx, axes, fun3, "#8e5ea2", 3);
+        showAxes(ctx, axes);
+    }
+
+</script>
+
+{% endblock %}

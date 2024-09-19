@@ -1,0 +1,191 @@
+{% extends "App03_ExperimentNoFeedback/myPage.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+{#    <strong>Part I:</strong> #}
+    Task # {{ taskNumber|json }} Results
+{% endblock %}
+
+{% block content %}
+
+    <p onload="draw1()"></p>
+
+
+        <p align="justify" id="par1" style="width: 50%"></p>
+
+        <p align="justify" id="par3" style="width: 50%">
+            The graphical summary of the technologies that have been developed is presented to the right.
+        </p>
+
+        <canvas class="myOuterBox" id="canvas1" width="502" height="402"></canvas>
+
+        <p align="justify" id="par4" style="width: 50%">
+            <b>Task Summary:</b>
+            <ul>
+            <li style="width: 50%">Technologies developed by you: <strong id="developed">None</strong></li>
+            <li style="width: 50%">Incurred cost: <strong id="totalCost">None</strong></li>
+            <li style="width: 50%">Best market technology: <strong id="best">___</strong></li>
+
+
+            </ul>
+        </p>
+
+        <p align="justify" id="par5" style="display:block;width: 50%">
+        <b>Task Earnings</b>: $<strong id="endow2" style="color: darkgreen">10</strong> + $<strong id="revenue2" style="color: darkgreen">None</strong> - $<strong id="cost2" style="color: red">None</strong> =
+        <strong id="earnings2" style="background-color: yellow">None</strong>
+        </p>
+
+
+<br>
+
+
+    <p align="justify" id="makeDecision" style="width: 50%">
+            Once you have reviewed the above information, plase click 'Next' to continue the experiment.
+    </p>
+
+
+    <input type="hidden" name="myEarnN" id="myEarnN"/>
+
+
+{% next_button %}
+
+{% endblock %}
+
+
+
+{% block scripts %}
+
+    <script>
+
+    var myVars={bestTech:{{ bestTech|json }},currentEarn:{{ currentEarn|json }},
+        marketTech:{{ marketTech|json }},marketType:{{ marketType|json }},
+        myTech:{{myTech|json}}, taskNumber:{{ taskNumber|json }}, techNumber:{{ techNumber|json }},
+        points:[], cost:{{myCost|json}} };
+
+    if(myVars.myTech.length>0){
+        var temp=myVars.myTech.split(",");
+        for(var i=1;i<temp.length;i++){
+            myVars.points.push(parseFloat(temp[i]))
+        }
+    }
+
+
+    function drawExample(){
+
+        var canvas = document.getElementById("canvas1");
+        if (null == canvas || !canvas.getContext) return;
+
+        var axes = {}, ctx = canvas.getContext("2d");
+        axes.xMin = 35;  // x0 pixels from left to x=0
+        axes.xMax = canvas.width - 35;
+        axes.yMin = -35 + canvas.height; // y0 pixels from top to y=0
+        axes.yMax = 35;
+        axes.xScale = (axes.xMax - axes.xMin) / 50.0;
+        axes.yScale = (axes.yMin - axes.yMax) / 0.15;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if(myVars.marketType==1) {
+            shadeGraph1(ctx, axes, fun3, "#fdccc7", myVars.bestTech);
+            shadeGraph2(ctx, axes, fun3, "#d7eedd", myVars.bestTech);
+            pointsGraph(ctx, axes, myVars.points);
+            pointGraph(ctx,axes, myVars.bestTech,"green");
+            bestGraph(ctx, axes, fun3, 1, myVars.bestTech);
+        }else if(myVars.marketType==2){
+            shadeGraph1(ctx, axes, fun3, "#fdccc7", myVars.marketTech);
+            shadeGraph2(ctx, axes, fun3, "#d7eedd", myVars.marketTech);
+            pointsGraph(ctx, axes, myVars.points);
+            pointGraph(ctx,axes, myVars.bestTech,"orange");
+            pointGraph(ctx,axes, myVars.marketTech,"green");
+            bestGraph(ctx, axes, fun3, 1, myVars.marketTech);
+        }else{
+            shadeGraph1(ctx, axes, fun3, "#fdccc7", myVars.bestTech);
+            shadeGraph2(ctx, axes, fun3, "#d7eedd", myVars.bestTech);
+            pointsGraph(ctx, axes, myVars.points);
+            pointGraph(ctx,axes, myVars.bestTech,"orange");
+            bestGraph(ctx, axes, fun3, 1, myVars.bestTech);
+        }
+
+        funGraph(ctx, axes, fun3, "#8e5ea2", 3);
+        showAxes(ctx, axes);
+    }
+
+    function updateSummary(){
+
+        var developed = "";
+        if(myVars.points.length==0){
+            developed="None"
+        }else{
+            for(var i=0;i<myVars.points.length-1;i++){
+                if(myVars.points[i]==myVars.bestTech){
+                    if(myVars.bestTech==myVars.marketTech || myVars.marketType==1) {
+                        developed += "<strong style=\"color: darkgreen\">" + myVars.points[i].toFixed(3) + "</strong>, "
+                    } else {
+                        developed += "<strong style=\"color: orange\">" + myVars.points[i].toFixed(3) + "</strong>, "
+                    }
+                }else{
+                    developed+="<strong style=\"color: gray\">" + myVars.points[i].toFixed(3)+"</strong>, "
+                }
+
+            }
+            if(myVars.points[i]==myVars.bestTech){
+                     if(myVars.bestTech==myVars.marketTech || myVars.marketType==1) {
+                        developed += "<strong style=\"color: darkgreen\">" + myVars.points[i].toFixed(3) + "</strong>"
+                    } else {
+                        developed += "<strong style=\"color: orange\">" + myVars.points[i].toFixed(3) + "</strong>"
+                    }
+                }else{
+                    developed+="<strong style=\"color: gray\">" + myVars.points[i].toFixed(3)+"</strong>"
+            }
+        }
+        updateText("developed",developed);
+        updateText("totalCost",myVars.points.length.toFixed(0)+" x ${{ myCost|json }}=<strong style=\"color: red\">$"+(myVars.points.length*{{ myCost|json }}).toFixed(0))+"</strong>";
+
+        {#updateText("best",myExample.best.toFixed(2));#}
+
+    }
+
+    function updateMarketType(){
+
+        if(myVars.marketType==1) {
+
+            updateText("best", "" + myVars.bestTech + " (developed by you)");
+            updateText("revenue2", 10);
+            updateText("cost2", (myVars.points.length *{{ myCost|json }}).toFixed(0));
+            updateText("earnings2", "$" + (10 - myVars.points.length *{{ myCost|json }}).toFixed(0));
+
+            var elem = document.getElementById("myEarnN");
+            elem.value = (10+10 - myVars.points.length *{{ myCost|json }}).toFixed(0)
+
+        } else {
+
+            if ({{ winStatus|json }}) {
+                updateText("best", "" + myVars.marketTech + " (developed by you)");
+                updateText("revenue2",(10).toFixed(0));
+                updateText("cost2", (myVars.points.length *{{ myCost|json }}).toFixed(0));
+                updateText("earnings2", "$" + (10+10 - myVars.points.length *{{ myCost|json }}).toFixed(0));
+
+                var elem = document.getElementById("myEarnN");
+                elem.value = (10+10 - myVars.points.length *{{ myCost|json }}).toFixed(0)
+
+            } else {
+                updateText("best", "" + myVars.marketTech + " (developed by the other participant)");
+                updateText("revenue2", (0).toFixed(0));
+                updateText("cost2", (myVars.points.length *{{ myCost|json }}).toFixed(0));
+                updateText("earnings2", "$" + (10+0 - myVars.points.length *{{ myCost|json }}).toFixed(0));
+
+                var elem = document.getElementById("myEarnN");
+                elem.value = (10+0 - myVars.points.length *{{ myCost|json }}).toFixed(0)
+            }
+        }
+
+    }
+
+    console.log(myVars);
+    drawExample();
+    updateSummary();
+    updateMarketType();
+
+    </script>
+
+{% endblock %}

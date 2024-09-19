@@ -1,0 +1,98 @@
+{% extends "App00_Consent/myPage.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Research Participant Information Template<br/>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <!-- define a script -->
+    <script>
+
+
+function myConsentFunction() {
+  confirm("You have chosen to not participate. Please RAISE YOUR HAND to let the experimenter know.");
+}
+
+    </script>
+
+{% endblock %}
+
+
+
+
+
+{% block content %}
+
+    <div class="fixedTop">
+    IRB Protocol #: [ ... ]
+    </div>
+
+    <div class="fixedBottom">
+    You may ask for a copy of this information sheet for your records.
+    </div>
+
+    <p align="center">
+        <small style="font-size: 18px; align-content: center">[...Project Title...]</small><br/>
+    <small style="font-size: 18px;">[...Name, Department, and University...]</small>
+    </p>
+
+    <div class="row">
+  <div class="column" style="background-color:white;">
+    <p align="justify">
+        <strong>What is the purpose of this study?</strong> This is research to learn how people make economic decisions using human subjects as participants.
+    </p>
+
+    <p align="justify">
+        <strong>What will I do if I choose to be in this study?</strong> In the experiment, you will choose actions based on information presented on your computer screen. For some of the tasks in today’s experiment you will be anonymously matched with other participants in this room, in which case you will see the actions chosen by the participants you are matched with, and they will see your actions.
+    </p>
+
+    <p align="justify">
+        <strong>How long will I be in the study?</strong> The entire experiment (including instructions) is expected to last about 60 minutes.
+    </p>
+
+    <p align="justify">
+        <strong>What are the possible risks or discomforts?</strong> Risks are minimal and are no greater than those encountered in everyday activities. Breach of confidentiality is a potential risk, but no individual identities are stored in the analysis dataset so this risk is minimal. Because the experiment is in a group, other subjects will know that you participated, but they will not learn the choices you make.
+    </p>
+
+    <p align="justify">
+        <strong>Are there any potential benefits?</strong> There is no direct benefit to you.
+    </p>
+
+    <p align="justify">
+        <strong>Will I receive payment or other incentive?</strong> You will be paid in cash at the end of the experiment. The amount of money earned depends upon your decisions and chance. The typical amount ranges between $5 and $25 per person. You are guaranteed to receive $5 regardless of your decisions. You will receive $5 even if you choose to withdraw from the experiment.
+    </p>
+  </div>
+  <div class="column" style="background-color:white;">
+<p align="justify">
+        <strong>Will information about me and my participation be kept confidential?</strong> Data from the experiment are recorded using randomly assigned identification numbers that are not linked to your identity. The data will be stored indefinitely on the researcher’s computer. The data may be used in future research. You will need to sign a receipt in order to get paid. The receipt with your name and signature may be provided to the business office in order to facilitate reimbursement. The projects research records may be inspected by departments at Purdue University responsible for regulatory and research oversight.
+    </p>
+
+    <p align="justify">
+        <strong>What are my rights if I take part in this study? </strong> Your participation in this study is voluntary.  You may choose not to participate or, if you agree to participate, you can withdraw your participation at any time without penalty or loss of benefits to which you are otherwise entitled.
+    </p>
+
+    <p align="justify">
+        <strong>Who can I contact if I have questions about the study?</strong> If you have questions, comments or concerns about this research project, you can talk to one of the researchers. [...]. If you have questions about your rights while taking part in the study or have concerns about the treatment of research participants, please call the Human Research Protection Program at [...].
+    </p>
+
+    <p align="justify">
+        <strong>Informed Consent</strong> I have had the opportunity to read this consent form and have the research study explained.  I have had the opportunity to ask questions about the research study, and my questions have been answered.  I am prepared to participate in the research study described above using a web-browser on a desktop computer.
+    </p>
+
+      <div style="text-align: center">
+          <button name="consent" value="Yes" class="btn btn-primary btn-large"><strong>Yes</strong>, I agree to participate</button>
+          <button type="button" class="btn btn-primary" onclick="myConsentFunction()"> <strong>No</strong>, I do not agree to participate </button>
+      </div>
+
+
+
+
+  </div>
+</div>
+
+
+{% endblock %}
+

@@ -1,0 +1,72 @@
+{% extends "App03_ExperimentNoFeedback/myPage.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+{#    <strong>Part I:</strong> #}
+    Task # {{ taskNumber }}
+{% endblock %}
+
+{% block content %}
+    <div class="card bg-light instructions">
+    <div class="card-body">
+<p align="justify" id="par0" style="width: 100%;display: none;">
+            Task # {{ taskNumber }} will have the same set up as the previous task. However, you will be matched with another
+            randomly selected participant in this room. As a reminder, the details are provided below.
+        </p>
+
+        <p align="justify" id="par1" style="width: 100%">
+            In this task, you will be matched with another randomly selected
+            participant in this room. Both of you will take on a role of entrepreneur.
+            Each entrepreneur is endowed with $10 and able to develop up to {{ Constants.maxTechnologies }} technologies
+            at the cost of $1. At the time of your decisions, each of you will <b>not know</b>
+            the best available technology (developed either by you or by the
+            participant that you are matched with). <strong style="color: red">The best technology
+            developed by the end of the task will be brought to the market and yield $10 revenue.</strong>
+            That is, if the best technology is developed by you, your revenue will be equal to $10.
+            If the best technology is not developed by you, your revenue will be $0.
+        </p>
+
+       <p align="justify" id="par2" style="width: 100%">
+            <b>Market Summary:</b>
+            <ul>
+            <li style="width: 50%">Number of entrepreneurs: <strong id="TaskSummary1" style="color: blue">Two</strong></li>
+            <li style="width: 50%">Best market technology: <strong id="TaskSummary2" style="color: blue">Unknown</strong></li>
+            <li style="width: 50%">Cost per technology: <strong id="TaskSummary3" style="color: blue"> $1 </strong></li>
+            <li style="width: 50%">Your endowment: <strong id="endow3" style="color: blue"> $10 </strong></li>
+
+            </ul>
+        </p>
+
+    </div>
+</div>
+
+
+
+
+    <button class="otree-btn-next btn btn-primary" id="NextButton" style="display:block;">Begin Task # {{ taskNumber }}</button>
+
+
+
+    <input type="hidden" name="taskSelected" value="" id="id_taskSelected"/>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+    <script>
+
+     myVars={marketType:{{marketType|json}}, cost:{{ myCost|json }}, taskNumber:{{ taskNumber|json }} };
+
+    function updateMarketType() {
+        console.log("Task Number:",myVars.taskNumber);
+        if(myVars.taskNumber>1){show("par0");}
+    }
+
+    console.log("Market Type:",{{ marketType|json }});
+
+    updateMarketType();
+
+    </script>
+
+{% endblock %}

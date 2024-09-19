@@ -1,0 +1,250 @@
+{% extends "App04_ExperimentFeedback/myPage.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+{#    <strong>Part I:</strong> #}
+    Task # {{ taskNumber|json }}
+{% endblock %}
+
+{% block content %}
+
+    <p onload="draw1()"></p>
+
+
+        <p align="justify" id="par1" style="width: 50%">
+
+        </p>
+
+       <p align="justify" id="par2" style="width: 50%">
+            <b>Market Summary:</b>
+            <ul>
+            <li style="width: 50%">Number of entrepreneurs: <strong id="TaskSummary1" style="color: blue">Matched With One Other Entrepreneur</strong></li>
+            <li style="width: 50%">Best market technology: <strong id="TaskSummary2" style="color: blue">Unknown</strong></li>
+            <li style="width: 50%">Cost per technology: <strong id="TaskSummary3" style="color: blue"> XXX </strong></li>
+            <li style="width: 50%">Your endowment: <strong id="TaskSummary3" style="color: blue"> $10 </strong></li>
+
+            </ul>
+        </p>
+
+        <p align="justify" id="par3" style="width: 50%">
+            The summary of the
+            probability that the new technology will be better (or worse) than the best
+            currently known technology is presented below. The graphical summary is
+            presented to the right.
+        </p>
+
+        <canvas class="myOuterBox" id="canvas1" width="502" height="402"></canvas>
+
+        <p align="justify" id="par4" style="width: 50%">
+            <b>Decision Summary:</b>
+            <ul>
+            <li style="width: 50%">Decision number: <strong>{{ techNumber }}</strong></li>
+            <li style="width: 50%">Technologies developed by you: <strong id="developed">None</strong></li>
+            <li style="width: 50%">Incurred cost: <strong id="totalCost">None</strong></li>
+            <li style="width: 50%">Best market technology: <strong id="best">___</strong></li>
+            <li style="width: 50%" id="probDesc1">Probability that technology #<strong id="tech1">1</strong> will be better than <strong id="best3">___</strong> is <strong id="probBetter">100%</strong></li>
+            <li style="width: 50%" id="probDesc2">Probability that technology #<strong id="tech2">1</strong> will be worse than <strong id="best4">___</strong> is <strong id="probWorse">0%</strong></li>
+
+            </ul>
+        </p>
+
+        <p align="justify" id="par5" style="display:none;width: 50%">
+        <b>Task Earnings</b>: <strong id="best2" style="color: darkgreen">None</strong> - <strong id="totalCost2">None</strong> =
+        <strong id="totalEarnings">None</strong>
+        </p>
+
+
+<br>
+
+
+    <p align="justify" id="makeDecision">
+            Please make your decision:
+    </p>
+
+
+    <div >
+        <p align="left" style="width: 50%">
+            <button name='myChoice' value="True" class="btn btn-primary" style="display:inline-block;" > Option A: Develop Technology #<strong id="tech3">1</strong> for $1. </button>
+            <button name="myChoice" value="False" class="btn btn-primary" style="display:inline-block;" > Option B: Do NOT Develop Technology #<strong id="tech4">1</strong>. </button>
+        </p>
+    </div>
+
+{% endblock %}
+
+
+
+{% block scripts %}
+
+    <script>
+
+    var myVars={bestTech:{{ bestTech|json }},currentEarn:{{ currentEarn|json }},
+        marketTech:{{ marketTech|json }},marketType:{{ marketType|json }},
+        myTech:{{myTech|json}}, taskNumber:{{ taskNumber|json }}, techNumber:{{ techNumber|json }},
+        points:[], cost:{{myCost|json}} };
+
+    if(myVars.myTech.length>0){
+        var temp=myVars.myTech.split(",");
+        for(var i=1;i<temp.length;i++){
+            myVars.points.push(parseFloat(temp[i]))
+        }
+    }
+
+
+    function drawExample(){
+
+        var canvas = document.getElementById("canvas1");
+        if (null == canvas || !canvas.getContext) return;
+
+        var axes = {}, ctx = canvas.getContext("2d");
+        axes.xMin = 35;  // x0 pixels from left to x=0
+        axes.xMax = canvas.width - 35;
+        axes.yMin = -35 + canvas.height; // y0 pixels from top to y=0
+        axes.yMax = 35;
+        axes.xScale = (axes.xMax - axes.xMin) / 50.0;
+        axes.yScale = (axes.yMin - axes.yMax) / 0.15;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if(myVars.marketType==1) {
+            shadeGraph1(ctx, axes, fun3, "#fdccc7", myVars.bestTech);
+            shadeGraph2(ctx, axes, fun3, "#d7eedd", myVars.bestTech);
+            pointsGraph(ctx, axes, myVars.points);
+            pointGraph(ctx,axes, myVars.bestTech,"green");
+            bestGraph(ctx, axes, fun3, 1, myVars.bestTech);
+        }else if(myVars.marketType==2){
+            shadeGraph1(ctx, axes, fun3, "#fdccc7", myVars.marketTech);
+            shadeGraph2(ctx, axes, fun3, "#d7eedd", myVars.marketTech);
+            pointsGraph(ctx, axes, myVars.points);
+            pointGraph(ctx,axes, myVars.bestTech,"orange");
+            pointGraph(ctx,axes, myVars.marketTech,"green");
+            bestGraph(ctx, axes, fun3, 1, myVars.marketTech);
+        }else{
+            shadeGraph1(ctx, axes, fun3, "#fdccc7", myVars.bestTech);
+            shadeGraph2(ctx, axes, fun3, "#d7eedd", myVars.bestTech);
+            pointsGraph(ctx, axes, myVars.points);
+            pointGraph(ctx,axes, myVars.bestTech,"orange");
+            bestGraph(ctx, axes, fun3, 1, myVars.bestTech);
+        }
+
+        funGraph(ctx, axes, fun3, "#8e5ea2", 3);
+        showAxes(ctx, axes);
+    }
+
+    function updateSummary(){
+        updateText("tech1",myVars.techNumber);
+        updateText("tech2",myVars.techNumber);
+        updateText("tech3",myVars.techNumber);
+        updateText("tech4",myVars.techNumber);
+
+        var developed = "";
+        if(myVars.points.length==0){
+            developed="None"
+        }else{
+            for(var i=0;i<myVars.points.length-1;i++){
+                if(myVars.points[i]==myVars.bestTech){
+                    if((myVars.bestTech==myVars.marketTech && myVars.marketType==2) || myVars.marketType==1) {
+                        developed += "<strong style=\"color: darkgreen\">" + myVars.points[i].toFixed(3) + "</strong>, "
+                    } else {
+                        developed += "<strong style=\"color: orange\">" + myVars.points[i].toFixed(3) + "</strong>, "
+                    }
+                }else{
+                    developed+="<strong style=\"color: gray\">" + myVars.points[i].toFixed(3)+"</strong>, "
+                }
+
+            }
+            if(myVars.points[i]==myVars.bestTech){
+                     if((myVars.bestTech==myVars.marketTech && myVars.marketType==2) || myVars.marketType==1) {
+                        developed += "<strong style=\"color: darkgreen\">" + myVars.points[i].toFixed(3) + "</strong>"
+                    } else {
+                        developed += "<strong style=\"color: orange\">" + myVars.points[i].toFixed(3) + "</strong>"
+                    }
+                }else{
+                    developed+="<strong style=\"color: gray\">" + myVars.points[i].toFixed(3)+"</strong>"
+            }
+        }
+        updateText("developed",developed);
+
+        updateText("totalCost",myVars.points.length.toFixed(0)+" x ${{ myCost|json }}=<strong style=\"color: red\">$"+(myVars.points.length*{{ myCost|json }}).toFixed(0))+"</strong>";
+
+        {#updateText("best",myExample.best.toFixed(2));#}
+
+        if(myVars.marketType==2){
+            updateText("probWorse", (100 * fun3Cumulative(myVars.marketTech)).toFixed(0) + "%");
+            updateText("probBetter", (100 * (1 - fun3Cumulative(myVars.marketTech))).toFixed(0) + "%");
+        }else {
+            updateText("probWorse", (100 * fun3Cumulative(myVars.bestTech)).toFixed(0) + "%");
+            updateText("probBetter", (100 * (1 - fun3Cumulative(myVars.bestTech))).toFixed(0) + "%");
+        }
+    }
+
+    function updateMarketType(){
+        if(myVars.marketType==1){
+            updateText("TaskSummary1","One");
+            updateText("TaskSummary2","Known");
+            updateText("TaskSummary3","$"+myVars.cost);
+
+            {#updateText("par1",#}
+            {#    "In this task, you will make a sequence of {{ Constants.maxTechnologies }} decisions corresponding to the first market type. " +#}
+            {#    "Specifically, you are the sole entrepreneur. " +#}
+            {#    "You are able to develop up to {{ Constants.maxTechnologies }} technologies "  +#}
+            {#    "at the cost of ${{ myCost|json }} per technology. " +#}
+            {#    "The best technology developed by the end of the task will be brought to the market. " +#}
+            {#    "Since you are the only entrepreneur in this market, your revenue will be equal to the revenue " +#}
+            {#    "generated by the best technology.");#}
+
+            updateText("best","<strong style=\"color: green\">$"+myVars.bestTech.toFixed(3)+"</strong>");
+            updateText("best3",""+myVars.bestTech.toFixed(3));
+            updateText("best4",""+myVars.bestTech.toFixed(3));
+
+        }else if(myVars.marketType==2){
+            updateText("TaskSummary1","Two");
+            updateText("TaskSummary2","Known");
+            updateText("TaskSummary3","$"+myVars.cost);
+
+            {#updateText("par1",#}
+            {#    "In this task, you will make a sequence of {{ Constants.maxTechnologies }} decisions corresponding to the second market type. " +#}
+            {#    "Specifically, there will be two entrepreneurs in this market (you and another randomly selected " +#}
+            {#    "participant in this room). " +#}
+            {#    "Each entrepreneur is able to develop up to {{ Constants.maxTechnologies }} technologies "  +#}
+            {#    "at the cost of ${{ myCost }}. At the time of your decisions, you will <b>know</b> " +#}
+            {#    "the best currently available technology (which could be developed either by you or by the "#}
+            {#    +"participant that you are matched with). The best technology " +#}
+            {#    "developed by the end of the task will be brought to the market." +#}
+            {#    "If the best technology is developed you, your revenue will be equal to the revenue generated by " +#}
+            {#    "the best technology. If the best technology is not developed by you, your revenue will be 0. ");#}
+
+            updateText("best",""+myVars.marketTech.toFixed(3));
+            updateText("best3",""+myVars.marketTech.toFixed(3));
+            updateText("best4",""+myVars.marketTech.toFixed(3));
+        }else{
+            updateText("TaskSummary1","Two");
+            updateText("TaskSummary2","Unknown");
+            updateText("TaskSummary3","$"+myVars.cost);
+
+            {#updateText("par1",#}
+            {#    "In this task, you will make a sequence of {{ Constants.maxTechnologies }} decisions corresponding to the third market type. " +#}
+            {#    "Specifically, there will be two entrepreneurs in this market (you and another randomly selected " +#}
+            {#    "participant in this room). " +#}
+            {#    "Each entrepreneur is able to develop up to {{ Constants.maxTechnologies }} technologies "  +#}
+            {#    "at the cost of ${{ myCost }}. At the time of your decisions, you will <b>not know</b> " +#}
+            {#    "the best currently available technology (which could be developed either by you or by the "#}
+            {#    +"participant that you are matched with). The best technology " +#}
+            {#    "developed by the end of the task will be brought to the market." +#}
+            {#    "If the best technology is developed you, your revenue will be equal to the revenue generated by " +#}
+            {#    "the best technology. If the best technology is not developed by you, your revenue will be 0. ");#}
+
+            updateText("best","Unknown");
+            updateText("best3",""+myVars.bestTech.toFixed(3));
+            updateText("best4",""+myVars.bestTech.toFixed(3));
+
+        }
+    }
+
+    console.log(myVars);
+    drawExample();
+    updateSummary();
+    updateMarketType();
+
+    </script>
+
+{% endblock %}
