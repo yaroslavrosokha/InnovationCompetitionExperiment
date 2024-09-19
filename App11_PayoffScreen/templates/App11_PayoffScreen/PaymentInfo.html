@@ -1,0 +1,137 @@
+{% extends "App11_PayoffScreen/myPage.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Compensation
+{% endblock %}
+
+{% block scripts %}
+
+    <!-- define a script -->
+    <script>
+
+    function randomTask() {
+        hide("pickTaskButton");
+        show("NextButton");
+
+
+        var task1 = Math.floor(Math.random()*27)+1;
+        var task2 = Math.floor(Math.random()*27)+1;
+        while (task2==task1){
+            task2=Math.floor(Math.random()*27);
+        }
+
+        var earnings = [
+                        {{ NoFeedTask1Earn|json }},{{ NoFeedTask2Earn|json }},{{ NoFeedTask3Earn|json }},{{ NoFeedTask4Earn|json }},{{ NoFeedTask5Earn|json }},
+                        {{ NoFeedTask6Earn|json }},{{ NoFeedTask7Earn|json }},{{ NoFeedTask8Earn|json }},
+                        {{ YesFeedTask1Earn|json }},{{ YesFeedTask2Earn|json }},{{ YesFeedTask3Earn|json }},{{ YesFeedTask4Earn|json }},{{ YesFeedTask5Earn|json }},
+                        {{ YesFeedTask6Earn|json }},{{ YesFeedTask7Earn|json }},{{ YesFeedTask8Earn|json }},
+                        {{ RiskAversionEarn|json }},{{ LossAversionEarn|json }},{{ SunkCostEarn|json }},
+                        {{ SingleTask1Earn|json }},{{SingleTask2Earn|json }},{{ SingleTask3Earn|json }},{{ SingleTask4Earn|json }},{{ SingleTask5Earn|json }},
+                        {{ SingleTask6Earn|json }},{{SingleTask7Earn|json }},{{ SingleTask8Earn|json }},];
+        console.log(earnings);
+
+        var total = earnings[task1-1]+earnings[task2-1];
+
+        var paragraph = document.getElementById("parPickTask");
+        paragraph.innerHTML = "The randomly chosen tasks are Task #"+task1.toFixed(0)+" and Task #"+task2.toFixed(0) + ". " +
+            "Your total earnings in the experiment are: $"+total.toFixed(1);
+
+        var tot = document.getElementById("id_total");
+        tot.value=total;
+
+        var t1 = document.getElementById("id_task1");
+        t1.value=task1.toFixed(0);
+
+        var t2 = document.getElementById("id_task2");
+        t2.value=task2.toFixed(0);
+
+        var hlT1 = document.getElementById("T"+task1.toFixed(0));
+        hlT1.style.backgroundColor="yellow";
+
+        var hlT2 = document.getElementById("T"+task2.toFixed(0));
+        hlT2.style.backgroundColor="yellow";
+
+    }
+
+    </script>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+        <p align="justify">
+            You have now made decisions in 27 tasks.
+            Two of these tasks will be chosen randomly by the
+            computer (with equal probability) for compensation.
+        </p>
+
+    <div class="row" style="background-color:white;">
+    <div class="column" style="background-color:white;">
+
+        <ul id="taskList">
+
+            <li id="T1">Task 1 Earning: ${{ NoFeedTask1Earn|json }}</li>
+            <li id="T2">Task 2 Earning: ${{ NoFeedTask2Earn|json }}</li>
+            <li id="T3">Task 3 Earning: ${{ NoFeedTask3Earn|json }}</li>
+            <li id="T4">Task 4 Earning: ${{ NoFeedTask4Earn|json }}</li>
+            <li id="T5">Task 5 Earning: ${{ NoFeedTask5Earn|json }}</li>
+            <li id="T6">Task 6 Earning: ${{ NoFeedTask6Earn|json }}</li>
+            <li id="T7">Task 7 Earning: ${{ NoFeedTask7Earn|json }}</li>
+            <li id="T8">Task 8 Earning: ${{ NoFeedTask8Earn|json }}</li>
+
+            <li id="T9">Task 9 Earning: ${{ YesFeedTask1Earn|json }}</li>
+            <li id="T10">Task 10 Earning: ${{ YesFeedTask2Earn|json }}</li>
+            <li id="T11">Task 11 Earning: ${{ YesFeedTask3Earn|json }}</li>
+            <li id="T12">Task 12 Earning: ${{ YesFeedTask4Earn|json }}</li>
+            <li id="T13">Task 13 Earning: ${{ YesFeedTask5Earn|json }}</li>
+            <li id="T14">Task 14 Earning: ${{ YesFeedTask6Earn|json }}</li>
+            <li id="T15">Task 15 Earning: ${{ YesFeedTask7Earn|json }}</li>
+            <li id="T16">Task 16 Earning: ${{ YesFeedTask8Earn|json }}</li>
+
+        </ul>
+
+    </div>
+
+        <div class="column" style="background-color:white;">
+
+        <ul id="taskList">
+
+            <li id="T17">Task 17 Earning: ${{ RiskAversionEarn|json }} (Your Decisions: {{ RiskAversionChoices|json }}; Randomly Chosen Decision: {{ RiskAversionQuestion|json }})</li>
+            <li id="T18">Task 18 Earning: ${{ LossAversionEarn|json }} (Your Decisions: {{ LossAversionChoices|json }}; Randomly Chosen Decision: {{ LossAversionQuestion|json }})</li>
+            <li id="T19">Task 19 Earning: ${{ SunkCostEarn|json }} (Your Decisions: {{ SunkCostChoices|json }}; Randomly Chosen Decision: {{ SunkCostQuestion|json }})</li>
+
+            <li id="T20">Task 20 Earning: ${{ SingleTask1Earn|json }}</li>
+            <li id="T21">Task 21 Earning: ${{ SingleTask2Earn|json }}</li>
+            <li id="T22">Task 22 Earning: ${{ SingleTask3Earn|json }}</li>
+            <li id="T23">Task 23 Earning: ${{ SingleTask4Earn|json }}</li>
+            <li id="T24">Task 24 Earning: ${{ SingleTask5Earn|json }}</li>
+            <li id="T25">Task 25 Earning: ${{ SingleTask6Earn|json }}</li>
+            <li id="T26">Task 26 Earning: ${{ SingleTask7Earn|json }}</li>
+            <li id="T27">Task 27 Earning: ${{ SingleTask8Earn|json }}</li>
+
+        </ul>
+
+    </div>
+
+
+    </div>
+
+        <p id="parPickTask"></p>
+
+        <p align="center">
+        <button type="button" id='pickTaskButton' class="btn btn-primary btn-large"
+                onclick="randomTask();" style="display:flex;">Randomly Pick Two Tasks</button>
+        </p>
+
+
+    <input type="hidden" name="total" value="" id="id_total"/>
+    <input type="hidden" name="task1" value="" id="id_task1"/>
+    <input type="hidden" name="task2" value="" id="id_task2"/>
+    <button class="otree-btn-next btn btn-primary" id="NextButton" style="display:none;">Next</button>
+
+
+{% endblock %}
+

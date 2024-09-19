@@ -1,0 +1,96 @@
+{% extends "App10_InnovationQuestionnaire/myPage.html" %}
+{% load staticfiles otree %}
+
+
+{% block scripts %}
+
+    <!-- define a script -->
+    <script>
+
+
+
+
+    </script>
+
+{% endblock %}
+
+
+{% block title %}
+
+    Questionnaire 4
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="row" style="background-color: #ffffff; padding: 5px 200px 5px 200px; font-size: 18px; text-align: justify">
+
+        Describe yourself as you generally are now, not as you wish to be in the future.
+        Describe yourself as you honestly see yourself, in relation to other people you know of the same sex as you are,
+        and roughly your same age. So that you can describe yourself in an honest manner, your
+        responses will be kept in absolute confidence. Indicate for each statement whether it is 1.
+        Very Inaccurate, 2. Moderately Inaccurate, 3. Neither Accurate Nor Inaccurate, 4. Moderately Accurate, or 5. Very Accurate as a description of you.
+
+    </div>
+
+    <div class="row">
+    <div class="column" style="background-color:white;">
+        <table class="table" id="decisionTable1">
+
+            {% for number,question in randomQuestionsOrder1 %}
+            <tr style="height: 60px;">
+                <td align="center" style="vertical-align:middle;width: 50px">#{{ number }}</td>
+
+                <td align="left" style="vertical-align:middle;"> {{ question }} </td>
+
+                <td align="right" style="vertical-align:middle;">
+
+                    <div class="dropdown">
+                      <button id="id_q_{{ number }}" type="button" onclick="myFunction({{ number }})" style="width: 250px;  height: 30px; line-height: 18px; padding: 6px;" class="dropbtn">Select</button>
+                      <div id="myDropdown_{{ number }}" class="dropdown-content">
+                            <a href="#" onclick="updateSelection({{ number }},1)">Very Inaccurate</a>
+                            <a href="#" onclick="updateSelection({{ number }},2)">Moderately Inaccurate</a>
+                            <a href="#" onclick="updateSelection({{ number }},3)">Neither Inaccurate Nor Accurate</a>
+                            <a href="#" onclick="updateSelection({{ number }},4)">Moderately Accurate</a>
+                            <a href="#" onclick="updateSelection({{ number }},5)">Very Accurate</a>
+                      </div>
+                    </div>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="column" style="background-color:white;">
+        <table class="table" id="decisionTable2">
+
+            {% for number,question in randomQuestionsOrder2 %}
+            <tr style="height: 60px;">
+                <td align="center" style="vertical-align:middle;width: 50px;">#{{ number }}</td>
+                <td align="left" style="vertical-align:middle;"> {{ question }} </td>
+                <td align="right" style="vertical-align:middle;">
+
+                    <div class="dropdown">
+                      <button id="id_q_{{ number }}" type="button" onclick="myFunction({{ number }})" style="width: 250px;  height: 30px; line-height: 18px; padding: 6px;" class="dropbtn">Select</button>
+                      <div id="myDropdown_{{ number }}" class="dropdown-content">
+                            <a href="#" onclick="updateSelection({{ number }},1)">Very Inaccurate</a>
+                            <a href="#" onclick="updateSelection({{ number }},2)">Moderately Inaccurate</a>
+                            <a href="#" onclick="updateSelection({{ number }},3)">Neither Accurate Nor Inaccurate</a>
+                            <a href="#" onclick="updateSelection({{ number }},4)">Moderately Accurate</a>
+                            <a href="#" onclick="updateSelection({{ number }},5)">Very Accurate</a>
+                      </div>
+                    </div>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    </div>
+
+    <input type="hidden" name="myResponses1" value=",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" id="id_responses"/>
+    <p style="text-align: center"><br/>
+        <button class="otree-btn-next btn btn-primary" id="NextButton" style="display:none;">Submit</button>
+    </p>
+{% endblock %}

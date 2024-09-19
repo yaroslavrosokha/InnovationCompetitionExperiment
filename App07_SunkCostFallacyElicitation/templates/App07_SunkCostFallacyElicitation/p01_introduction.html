@@ -1,0 +1,36 @@
+{% extends "App07_SunkCostFallacyElicitation/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Task #19 Description
+{% endblock %}
+
+{% block content %}
+    <div class="card bg-light instructions">
+    <div class="card-body">
+    <p align="justify">
+        For Task #19, you are the sole entrepreneur in the market facing a two-period investment problem.
+        Specifically, in the first period, you are endowed with <strong>$15</strong> and have to initiate a research project at a cost of <strong>$5</strong> (leaving you with $10).
+        You know that there is uncertainty about the cost to complete the project in the second period.
+        Specifically, the costs to complete the project takes one of the values {0.5,1,...,10}. A completed project has a value of <strong>$7.5</strong>,
+        and an uncompleted project has a value of <strong>$0</strong>.
+        In the second period you will observe the completion cost of the project and then choose between two options -- Option A and Option B:
+        <ul>
+        <li>Option A: Complete the project at the completion cost and receive profit of <strong>[Endowment - $5]+[$7.5 - Project Completion Cost]</strong></li>
+        <li>Option B: Do not complete the project and receive profit of <strong>[Endowment - $5]</strong></li>
+    </ul>
+
+    </p>
+
+    <p align="justify">
+        Next, you will initiate the project at a cost of $5. After that you will make 20 decisions (one for each of the realized completion cost values) using the decision table similar the previous tasks.
+    </p>
+
+
+    <button class="otree-btn-next btn btn-primary" id="NextButton">Initiate a project at a cost of $5.</button>
+    </div>
+    </div>
+{% endblock %}
+
+
+

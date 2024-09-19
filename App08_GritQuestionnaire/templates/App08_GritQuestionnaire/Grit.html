@@ -1,0 +1,38 @@
+{% extends "App08_GritQuestionnaire/myPage.html" %}
+{% load staticfiles otree %}
+
+
+{% block scripts %}
+
+    <!-- define a script -->
+    <script>
+
+
+
+
+    </script>
+
+{% endblock %}
+
+
+{% block title %}
+
+    Questionnaire 1
+
+    <p style="text-align: center; font-size:18px;">Please respond to the following 12 items. Be honest – there are no right or wrong answers!</p>
+
+
+{% endblock %}
+
+{% block content %}
+
+
+    {% for field in form %}
+            {% formfield field %}
+    {% endfor %}
+
+
+
+    <button class="otree-btn-next btn btn-primary" id="NextButton" >Submit</button>
+
+{% endblock %}

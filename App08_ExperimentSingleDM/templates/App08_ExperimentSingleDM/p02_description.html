@@ -1,0 +1,79 @@
+{% extends "App08_ExperimentSingleDM/myPage.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+{#    <strong>Part I:</strong> #}
+    Tasks #20-27: Description
+{% endblock %}
+
+{% block content %}
+
+    <body onload="draw3()">
+
+    <p align="justify" id="par1" style="width: 50%">
+{#            In <strong style="color: blue;">Part I</strong> of #}
+            In Tasks #20-27, you will again take a role of entrepreneur.
+            In particular, you will will be given an endowment of $10 and choose whether to develop up to {{ Constants.maxTechnologies }} technologies.
+            However, unlike the first 16 tasks, you are the sole entrepreneur in the market in which there is an existing technology.
+            You will know the quality of the existing technology at the time of your decision.
+    </p>
+
+    <canvas class="myOuterBox" id="canvas1" width="502" height="402"></canvas>
+
+
+    <p align="justify" id="par2" style="width: 50%;">
+            The decisions of whether to develop a technology will be made sequentially.
+            In particular, you will first decide whether to develop
+            technology #1. If you decide to do so, you will incur a cost and observe
+            the quality of technology #1. Next, you will decide whether to develop technology #2.
+            And so on. At each decision, you will be provided with the summary information in the graphical and text forms (as before).
+            In particular, the technologies that you develop will be marked with black lines
+        and the existing technology will be marked on the graph with a red line.
+    </p>
+
+
+
+    <input type="hidden" name="task1" value="0000000000" id="id_task1"/>
+
+    <button class="otree-btn-next btn btn-primary" id="NextButton">Next</button>
+
+    <br><br><br><br>
+{% endblock %}
+
+
+{% block scripts %}
+
+
+<script>
+
+
+function nextSubpage() {
+    if (MyVariables.currentPage < 6) {
+        MyVariables.currentPage++;
+    }
+
+    if (MyVariables.currentPage == 2) {
+
+        show("par2");
+    }
+
+    if (MyVariables.currentPage == 3) {
+
+        show("par3");
+        show("summary1");
+    }
+
+    if (MyVariables.currentPage == 4) {
+        draw2();
+        draw3();
+        show("par4");
+        hide(">>");
+        show("NextButton")
+    }
+
+    console.log(MyVariables);
+}
+
+</script>
+
+{% endblock %}

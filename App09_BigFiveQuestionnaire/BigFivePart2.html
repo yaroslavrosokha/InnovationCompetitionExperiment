@@ -1,0 +1,100 @@
+{% extends "App09_BigFiveQuestionnaire/myPage.html" %}
+{% load staticfiles otree %}
+
+
+{% block scripts %}
+
+    <!-- define a script -->
+    <script>
+
+
+
+
+    </script>
+
+{% endblock %}
+
+
+{% block title %}
+
+    Questionnaire 3
+
+    <p style="text-align: center; font-size:18px;">Here are a number of characteristics that may or may not apply to you. <br/>Please respond to the following 22 items by selecting the extent to which you agree or disagree with that statement.
+    </p>
+
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+    <div class="column" style="background-color:white;">
+        <table class="table" id="decisionTable1">
+            <tr>
+                <td align="center" width="50px" style="font-weight:bold; vertical-align:middle">Item</td>
+                <td align="left" style="font-weight:bold">I see Myself as Someone Who...</td>
+                <td align="center" style="font-weight:bold; vertical-align:middle"></td>
+
+            </tr>
+            {% for number,question in randomQuestionsOrder3 %}
+            <tr>
+                <td align="center" style="vertical-align:middle;">#{{ number }}</td>
+
+                <td align="left" style="vertical-align:middle;"> {{ question }} </td>
+
+                <td align="right">
+
+
+                    <div class="dropdown">
+                      <button id="id_q_{{ number }}" type="button" onclick="myFunction({{ number }})" style="width: 250px;  height: 30px; line-height: 18px; padding: 6px;" class="dropbtn">Select</button>
+                      <div id="myDropdown_{{ number }}" class="dropdown-content">
+                            <a href="#" onclick="updateSelection({{ number }},1)">Disagree strongly</a>
+                            <a href="#" onclick="updateSelection({{ number }},2)">Disagree a little</a>
+                            <a href="#" onclick="updateSelection({{ number }},3)">Neither agree nor disagree</a>
+                            <a href="#" onclick="updateSelection({{ number }},4)">Agree a little</a>
+                            <a href="#" onclick="updateSelection({{ number }},5)">Agree strongly</a>
+                      </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="column" style="background-color:white;">
+        <table class="table" id="decisionTable2">
+            <tr>
+                <td align="center" width="50px" style="font-weight:bold; vertical-align:middle">Item</td>
+                <td align="left" style="font-weight:bold">I see Myself as Someone Who...</td>
+                <td align="center" style="font-weight:bold; vertical-align:middle"></td>
+
+            </tr>
+            {% for number,question in randomQuestionsOrder4 %}
+            <tr>
+                <td align="center" style="vertical-align:middle;">#{{ number }}</td>
+                <td align="left" style="vertical-align:middle;"> {{ question }} </td>
+                <td align="right">
+
+                    <div class="dropdown">
+                      <button id="id_q_{{ number }}" type="button" onclick="myFunction({{ number }})" style="width: 250px;  height: 30px; line-height: 18px; padding: 6px;" class="dropbtn">Select</button>
+                      <div id="myDropdown_{{ number }}" class="dropdown-content">
+                            <a href="#" onclick="updateSelection({{ number }},1)">Disagree strongly</a>
+                            <a href="#" onclick="updateSelection({{ number }},2)">Disagree a little</a>
+                            <a href="#" onclick="updateSelection({{ number }},3)">Neither agree nor disagree</a>
+                            <a href="#" onclick="updateSelection({{ number }},4)">Agree a little</a>
+                            <a href="#" onclick="updateSelection({{ number }},5)">Agree strongly</a>
+                      </div>
+                    </div>
+
+
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    </div>
+
+    <input type="hidden" name="myResponses2" value=",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" id="id_responses"/>
+
+    <button class="otree-btn-next btn btn-primary" id="NextButton" style="display:none;">Submit</button>
+{% endblock %}

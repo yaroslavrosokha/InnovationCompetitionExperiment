@@ -1,0 +1,72 @@
+{% extends "App07_SunkCostFallacyElicitation/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Task # 19
+    <p align="center" style="font-size:18px">
+        Please make a choice for <strong style="color: red">each of the 20 decisions</strong> in this task.
+        Reminder: Uncompleted Project Payoff = [Endowment -$5];
+        Completed Project Payoff= [Endowment -$5]+[$7.5- Project Completion Cost].
+    </p>
+{% endblock %}
+
+{% block content %}
+    <div class="card bg-light instructions">
+    <div class="card-body">
+
+    <table class="table" id="decisionTable">
+        <tr>
+            <td align="center" style="font-weight:bold; vertical-align:middle">Decision</td>
+            <td align="center" style="font-weight:bold; vertical-align:middle">Completion Cost</td>
+            <td align="right" width="400px" style="font-weight:bold">Option A</td>
+            <td width="20px"></td>
+            <td width="30px"></td>
+            <td align="left" style="font-weight:bold">Option B</td>
+            <td align="center" style="font-weight:bold">Your Choice</td>
+        </tr>
+        {% for number,safe in offer_numbers %}
+        <tr>
+            <td align="center" style="vertical-align:middle;">#{{ number }}</td>
+            <td align="center" style="vertical-align:middle;"><strong>${{ safe }}</strong></td>
+            <td align="right" style="vertical-align:middle;"><strong style="color: #000000">Complete</strong></td>
+            <td style="vertical-align:middle">
+                <input type="radio" name="offer_{{ number }}" id="id_offer_A_{{ number }}" value="True" onclick="selectInTable('id_responses','id_offer_A_{{ number }}')">
+            </td>
+            <td align="left" style="vertical-align:middle">
+                <input type="radio" name="offer_{{ number }}" value="False" onclick="selectInTable('id_responses','id_offer_A_{{ number }}')">
+            </td>
+            <td style="vertical-align:middle">
+                <strong>Do Not Complete</strong>
+            </td>
+            <td align="center" style="font-weight:bold;vertical-align:middle">
+                __
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p align="justify" id="SingleSwitchingMessage" style="display: none; color: red">
+        Please revisit the decision table to ensure that your responses are consistent. That is, if you switch from A to B, you should not switch back to A again.
+    </p>
+
+        <p align="center" id="NextMessage" style="display: none">
+
+        <button class="otree-btn-next btn btn-primary" id="NextButton" style="display:none;">Submit Decisions</button>
+
+    </p>
+
+    <input type="hidden" name="responses" value="00000000000000000000" id="id_responses"/>
+    <input type="hidden" name="checkConfirm" id="id_checkConfirm"/>
+
+
+    </div>
+    </div>
+
+
+
+
+
+{% endblock %}
+
+
+
